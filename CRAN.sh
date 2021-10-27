@@ -1,0 +1,1 @@
+echo 'options("repos" = c(CRAN="https://mirrors.aliyun.com/CRAN/"))' >> ~/.Rprofile
