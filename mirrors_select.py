@@ -2,6 +2,8 @@
 import requests
 from tabulate import tabulate
 import sys
+from os.path import expanduser
+home = expanduser("~")
 def get_latency (url) :
     result = requests.get(url)
     return "%.1f ms" % (result.elapsed.total_seconds() * 1000)
@@ -40,7 +42,7 @@ with open('mirrors_list.txt','r') as f:
             print(f"输入有误，请重新输入 [1-{len(res)-1}]：")
             pass
     
-    with open('mirrors_selected.txt', 'w') as f:
+    with open(home+'/.mirrors_selected.txt', 'w') as f:
         f.write(res[choice][1])
     
     print(f'镜像成功修改为 {res[choice][1]}')

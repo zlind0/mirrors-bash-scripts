@@ -4,7 +4,11 @@ opts_array=("选择镜像服务器" $(ls -1|grep \\.sh|grep -v mirrors|sort))
 
 opts_length=$(echo $opts|wc -l)
 
-echo -e "当前偏好镜像： \x1B[01;93m $(cat mirrors_selected.txt) \x1B[0m"
+if [ ! -f ~/.mirrors_selected.txt ]; then
+    ./mirrors_select.py
+fi
+
+echo -e "当前偏好镜像： \x1B[01;93m $(cat ~/.mirrors_selected.txt) \x1B[0m"
 # echo "当前偏好镜像：$(cat mirrors_selected.txt)"
 echo "请选择需要修改镜像的软件："
 
@@ -20,7 +24,7 @@ if [[ $choice == "0" ]]; then
 else
     start_frame="=============== $(echo ${opts_array[$choice]}|sed "s/.sh//g") =================="
     echo -e $start_frame
-    cat ${opts_array[$choice]}|sed "s#\$MIRROR_SITE#$(cat mirrors_selected.txt)#g" > /tmp/mirror_script.sh
+    cat ${opts_array[$choice]}|sed "s#\$MIRROR_SITE#$(cat ~/.mirrors_selected.txt)#g" > /tmp/mirror_script.sh
     cat /tmp/mirror_script.sh|sed "s/^/$ /g"
     echo ""
 
