@@ -1,1 +1,1 @@
-echo 'options("repos" = c(CRAN="https://mirrors.aliyun.com/CRAN/"))' >> ~/.Rprofile
+echo 'options("repos" = c(CRAN="$MIRROR_SITE/CRAN/"))' >> ~/.Rprofile

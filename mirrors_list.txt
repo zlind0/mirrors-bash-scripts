@@ -1,0 +1,6 @@
+https://mirrors.aliyun.com
+https://mirrors.cloud.tencent.com
+https://mirrors.163.com
+https://mirrors.tuna.tsinghua.edu.cn
+https://mirrors.nju.edu.cn
+https://mirrors.ustc.edu.cn
