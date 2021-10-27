@@ -28,9 +28,9 @@ else
     printf "%0.s-" $(seq 1 $frame_length)
     echo ""
 
-    read -p "确定? [y/N]" choice
+    read -p "确定? [y/N]" ychoice
 
-    if [ $choice = 'y' ]; then
+    if [ $ychoice = 'y' ]; then
         echo Execute: bash ${opts_array[$choice]}
     fi
 fi
