@@ -7,6 +7,7 @@
 - Anaconda / Miniconda
 - CPAN (Perl)
 - CRAN (R)
+- epel
 - Go (GOPROXY)
 - NPM
 - pypi (Python)
