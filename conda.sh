@@ -1,3 +1,9 @@
+[ -f ~/.condarc ] && cp ~/.condarc ~/.condarc.bak
+
+# 很遗憾，腾讯、163、中科大镜像不提供Anaconda
+([[ $MIRROR_SITE =~ tencent ]] || [[ $MIRROR_SITE =~ 163 ]] || [[ $MIRROR_SITE =~ ustc ]]) && \
+  MIRROR_SITE=https://mirrors.aliyun.com
+
 cat << ! > ~/.condarc
 channels:
   - defaults

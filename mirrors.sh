@@ -1,39 +1,40 @@
 #!/bin/bash
-current_mirror=$(cat ~/.mirrors_selected.txt|head -n1)
-opts_array=("选择镜像服务器" \
-    "刷新所有镜像为\x1B[01;93m $current_mirror \x1B[0m \n    -----------------------------------------"\
+
+MIRROR_SELECTED=~/.mirrors_selected.txt
+CURRENT_MIRROR=$(cat $MIRROR_SELECTED|head -n1)
+APPS_ARRAY=("选择镜像服务器" \
+    "刷新所有镜像为\x1B[01;93m $CURRENT_MIRROR \x1B[0m \n    -----------------------------------------"\
      $(ls -1|grep \\.sh|grep -v mirrors|sort))
 
-opts_length=$(echo $opts|wc -l)
-
-if [ ! -f ~/.mirrors_selected.txt ]; then
+if [ ! -f $MIRROR_SELECTED ]; then
     ./mirrors_select.py
 fi
 
-echo -e "当前偏好镜像： \x1B[01;93m $current_mirror \x1B[0m"
+echo -e "当前偏好镜像： \x1B[01;93m $CURRENT_MIRROR \x1B[0m"
 # echo "当前偏好镜像：$(cat mirrors_selected.txt)"
 echo -e "请选择需要修改镜像的软件：\n============================================"
 
-for i in ${!opts_array[@]}; do
-    grep -qF "${opts_array[$i]}" ~/.mirrors_selected.txt && \
-        isset="(曾设置为 $(grep "${opts_array[$i]}" ~/.mirrors_selected.txt|cut -d' ' -f2))"
-    echo -e "${i})" ${opts_array[$i]} $isset|sed "s/.sh//g"
+for i in ${!APPS_ARRAY[@]}; do
+    grep -qF "${APPS_ARRAY[$i]}" $MIRROR_SELECTED && \
+        isset="(曾设置为 $(grep "${APPS_ARRAY[$i]}" $MIRROR_SELECTED|cut -d' ' -f2))"
+    echo -e "${i})" ${APPS_ARRAY[$i]} $isset|sed "s/.sh//g"
     unset isset
 done
 
-read -p "输入[0-${#opts_array[@]}]:" choice
+read -p "输入[0-${#APPS_ARRAY[@]}]:" choice
 
 echo $choice
 if [[ $choice == "0" ]]; then
     ./mirrors_select.py
+    $0
 elif [[ $choice == "1" ]]; then
     rm /tmp/mirror_script.sh
     declare -a refresh_apps=();
-    for i in ${!opts_array[@]}; do
-        grep -qF "${opts_array[$i]}" ~/.mirrors_selected.txt && \
-            (echo -e "# ======\x1B[01;93m 设置 ${opts_array[$i]} 的镜像为 $current_mirror \x1B[0m======" >> /tmp/mirror_script.sh) && \
-            (cat ${opts_array[$i]} | sed "s#\$MIRROR_SITE#$current_mirror#g" >> /tmp/mirror_script.sh) && \
-            (echo '' >> /tmp/mirror_script.sh) && refresh_apps+=("${opts_array[$i]}")
+    for i in ${!APPS_ARRAY[@]}; do
+        grep -qF "${APPS_ARRAY[$i]}" $MIRROR_SELECTED && \
+            (echo -e "# ======\x1B[01;93m 设置 ${APPS_ARRAY[$i]} 的镜像为 $CURRENT_MIRROR \x1B[0m======" >> /tmp/mirror_script.sh) && \
+            (cat ${APPS_ARRAY[$i]} | sed "s#\$MIRROR_SITE#$CURRENT_MIRROR#g" >> /tmp/mirror_script.sh) && \
+            (echo '' >> /tmp/mirror_script.sh) && refresh_apps+=("${APPS_ARRAY[$i]}")
         # echo "refreshapps" ${refresh_apps[@]}
     done
     cat /tmp/mirror_script.sh|sed "s/^/$ /g"
@@ -46,15 +47,16 @@ elif [[ $choice == "1" ]]; then
 
     if [ $ychoice = 'y' ]; then
         for app in ${refresh_apps[@]}; do
-            sed -i "/$app/d" ~/.mirrors_selected.txt
-            echo "$app $current_mirror" >> ~/.mirrors_selected.txt
+            sed -i "/$app/d" $MIRROR_SELECTED
+            echo "$app $CURRENT_MIRROR" >> $MIRROR_SELECTED
         done
         bash /tmp/mirror_script.sh
     fi
 else
-    start_frame="=============== $(echo ${opts_array[$choice]}|sed "s/.sh//g") =================="
+    start_frame="=============== $(echo ${APPS_ARRAY[$choice]}|sed "s/.sh//g") =================="
     echo -e $start_frame
-    cat ${opts_array[$choice]}|sed "s#\$MIRROR_SITE#$current_mirror#g" > /tmp/mirror_script.sh
+    echo "export MIRROR_SITE='$CURRENT_MIRROR'" >/tmp/mirror_script.sh
+    cat ${APPS_ARRAY[$choice]} >> /tmp/mirror_script.sh
     cat /tmp/mirror_script.sh|sed "s/^/$ /g"
     echo ""
 
@@ -65,8 +67,8 @@ else
     read -p "确定? [y/N]" ychoice
 
     if [ $ychoice = 'y' ]; then
-        sed -i "/${opts_array[$choice]}/d" ~/.mirrors_selected.txt
-        echo "${opts_array[$choice]} $current_mirror" >> ~/.mirrors_selected.txt
+        sed -i "/${APPS_ARRAY[$choice]}/d" $MIRROR_SELECTED
+        echo "${APPS_ARRAY[$choice]} $CURRENT_MIRROR" >> $MIRROR_SELECTED
         bash /tmp/mirror_script.sh
     fi
 fi
