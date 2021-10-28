@@ -3,7 +3,8 @@
 MIRROR_SELECTED=~/.mirrors_selected.txt
 CURRENT_MIRROR=$(cat $MIRROR_SELECTED|head -n1)
 APPS_ARRAY=("选择镜像服务器" \
-    "刷新所有镜像为\x1B[01;93m $CURRENT_MIRROR \x1B[0m \n    -----------------------------------------"\
+    "清除镜像服务器偏好" \
+    "刷新所有已修改的镜像为\x1B[01;93m $CURRENT_MIRROR \x1B[0m \n    -----------------------------------------"\
      $(ls -1|grep \\.sh|grep -v mirrors|sort))
 
 if [ ! -f $MIRROR_SELECTED ]; then
@@ -28,13 +29,20 @@ if [[ $choice == "0" ]]; then
     ./mirrors_select.py
     $0
 elif [[ $choice == "1" ]]; then
-    rm /tmp/mirror_script.sh
+    mv $MIRROR_SELECTED $MIRROR_SELECTED.bak
+    echo "default（不配置镜像）" > $MIRROR_SELECTED
+    sed 1d $MIRROR_SELECTED.bak >> $MIRROR_SELECTED
+    $0
+elif [[ $choice == "2" ]]; then
+    [ -f /tmp/mirror_script.sh ] && rm /tmp/mirror_script.sh
     declare -a refresh_apps=();
-    for i in ${!APPS_ARRAY[@]}; do
-        grep -qF "${APPS_ARRAY[$i]}" $MIRROR_SELECTED && \
-            (echo -e "# ======\x1B[01;93m 设置 ${APPS_ARRAY[$i]} 的镜像为 $CURRENT_MIRROR \x1B[0m======" >> /tmp/mirror_script.sh) && \
-            (cat ${APPS_ARRAY[$i]} | sed "s#\$MIRROR_SITE#$CURRENT_MIRROR#g" >> /tmp/mirror_script.sh) && \
-            (echo '' >> /tmp/mirror_script.sh) && refresh_apps+=("${APPS_ARRAY[$i]}")
+    echo "export MIRROR_SITE='$CURRENT_MIRROR'" >/tmp/mirror_script.sh
+    for i in ${APPS_ARRAY[@]:3}; do
+        (grep -qF "$i" $MIRROR_SELECTED ) && \
+            (echo -e "\n# ======\x1B[01;93m 设置 $i 的镜像为 $CURRENT_MIRROR \x1B[0m======" >> /tmp/mirror_script.sh) && \
+            (echo '' >> /tmp/mirror_script.sh) && refresh_apps+=("$i") && \
+            (cat $i >> /tmp/mirror_script.sh)
+            
         # echo "refreshapps" ${refresh_apps[@]}
     done
     cat /tmp/mirror_script.sh|sed "s/^/$ /g"
@@ -48,12 +56,12 @@ elif [[ $choice == "1" ]]; then
     if [ $ychoice = 'y' ]; then
         for app in ${refresh_apps[@]}; do
             sed -i "/$app/d" $MIRROR_SELECTED
-            echo "$app $CURRENT_MIRROR" >> $MIRROR_SELECTED
+            [[ ! $CURRENT_MIRROR =~ default ]] && echo "$app $CURRENT_MIRROR" >> $MIRROR_SELECTED
         done
         bash /tmp/mirror_script.sh
     fi
 else
-    start_frame="=============== $(echo ${APPS_ARRAY[$choice]}|sed "s/.sh//g") =================="
+    start_frame="\n# ======\x1B[01;93m 设置 ${APPS_ARRAY[$choice]} 的镜像为 $CURRENT_MIRROR \x1B[0m======"
     echo -e $start_frame
     echo "export MIRROR_SITE='$CURRENT_MIRROR'" >/tmp/mirror_script.sh
     cat ${APPS_ARRAY[$choice]} >> /tmp/mirror_script.sh
@@ -68,7 +76,7 @@ else
 
     if [ $ychoice = 'y' ]; then
         sed -i "/${APPS_ARRAY[$choice]}/d" $MIRROR_SELECTED
-        echo "${APPS_ARRAY[$choice]} $CURRENT_MIRROR" >> $MIRROR_SELECTED
+        [[ ! $CURRENT_MIRROR =~ default ]] && echo "${APPS_ARRAY[$choice]} $CURRENT_MIRROR" >> $MIRROR_SELECTED
         bash /tmp/mirror_script.sh
     fi
 fi

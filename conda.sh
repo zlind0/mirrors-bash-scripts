@@ -1,5 +1,8 @@
 [ -f ~/.condarc ] && cp ~/.condarc ~/.condarc.bak
 
+if [[ "$MIRROR_SITE" =~ default ]]; then
+ sed -i '/default_channels/d;/custom_channels/d;/anaconda\//d;' ~/.condarc
+else
 # 很遗憾，腾讯、163、中科大镜像不提供Anaconda
 ([[ $MIRROR_SITE =~ tencent ]] || [[ $MIRROR_SITE =~ 163 ]] || [[ $MIRROR_SITE =~ ustc ]]) && \
   MIRROR_SITE=https://mirrors.aliyun.com
@@ -20,3 +23,4 @@ custom_channels:
   pytorch: $MIRROR_SITE/anaconda/cloud
   simpleitk: $MIRROR_SITE/anaconda/cloud
 !
+fi

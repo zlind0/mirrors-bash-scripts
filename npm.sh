@@ -6,3 +6,5 @@ REGISTRY=https://registry.npm.taobao.org
 [[ $MIRROR_SITE =~ ustc ]] && REGISTRY=http://npmreg.mirrors.ustc.edu.cn/
 
 npm config set registry $REGISTRY
+
+[[ $MIRROR_SITE =~ default ]] && npm config delete registry
