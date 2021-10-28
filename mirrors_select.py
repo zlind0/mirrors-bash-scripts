@@ -41,9 +41,12 @@ with open('mirrors_list.txt','r') as f:
         except:
             print(f"输入有误，请重新输入 [1-{len(res)-1}]：")
             pass
-    
+
+    with open(home+'/.mirrors_selected.txt', 'r') as f:
+        lines=f.readlines()
+    lines[0]=res[choice][1]+"\n"
     with open(home+'/.mirrors_selected.txt', 'w') as f:
-        f.write(res[choice][1])
+        f.writelines(lines)
     
     print(f'镜像成功修改为 {res[choice][1]}')
 
