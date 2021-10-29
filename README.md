@@ -23,6 +23,14 @@
 
 ## 使用方法
 
+### yum 安装
+
+```
+yum install https://codeup.openanolis.cn/codeup/helpertools/mirrors-helper/raw/rpmrelease/mirrors-helper.rpm
+```
+
+### 从代码运行
+
 ```
 ./mirrors.sh
 ```

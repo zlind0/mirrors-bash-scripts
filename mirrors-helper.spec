@@ -8,11 +8,11 @@ Summary:        A tool for selecting mirrors
 License:        GPL
 BuildArch:      noarch
 
-BuildRequires: python3
-BuildRequires: python3-requests
-BuildRequires: bc
-BuildRequires: make
+Requires: python3
+Requires: python3-requests
+Requires: bc
 
+BuildRequires: make
 
 %description
 sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files.
