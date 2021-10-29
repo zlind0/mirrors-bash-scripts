@@ -9,8 +9,10 @@ License:        GPL
 BuildArch:      noarch
 
 BuildRequires: python3
-BuildRequires: bc
 BuildRequires: python3-requests
+BuildRequires: bc
+BuildRequires: make
+
 
 %description
 sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files.

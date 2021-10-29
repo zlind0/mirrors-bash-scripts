@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import requests
 from tabulate import tabulate
-import sys
+import sys, os
 from os.path import expanduser
 home = expanduser("~")
 def get_latency (url) :
@@ -42,9 +42,11 @@ with open('mirrors_list.txt','r') as f:
             print(f"输入有误，请重新输入 [1-{len(res)-1}]：")
             pass
 
-    with open(home+'/.mirrors_selected.txt', 'r') as f:
-        lines=f.readlines()
-    lines[0]=res[choice][1]+"\n"
+    lines=[res[choice][1]+"\n"]
+    if os.path.exists(home+'/.mirrors_selected.txt'):
+        with open(home+'/.mirrors_selected.txt', 'r') as f:
+            lines=f.readlines()
+        lines[0]=res[choice][1]+"\n"
     with open(home+'/.mirrors_selected.txt', 'w') as f:
         f.writelines(lines)
     

@@ -2,6 +2,11 @@
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd $SCRIPT_DIR
 MIRROR_SELECTED=~/.mirrors_selected.txt
+
+# if mirror is not set, set the mirror
+if [ ! -f $MIRROR_SELECTED ]; then
+    ./mirrors_select.py
+fi
 CURRENT_MIRROR=$(cat $MIRROR_SELECTED|head -n1)
 
 # first 3 operations are defined
@@ -11,10 +16,7 @@ APPS_ARRAY=("选择镜像服务器" \
     "刷新所有已用本工具修改的镜像为\x1B[01;93m $CURRENT_MIRROR \x1B[0m \n    -----------------------------------------"\
      $(ls -1|grep \\.sh|grep -v mirrors|sort))
 
-# if mirror is not set, set the mirror
-if [ ! -f $MIRROR_SELECTED ]; then
-    ./mirrors_select.py
-fi
+
 
 # output the menu to let user choose an option
 echo -e "当前偏好镜像： \x1B[01;93m $CURRENT_MIRROR \x1B[0m"
