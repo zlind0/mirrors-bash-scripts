@@ -1,5 +1,6 @@
 #!/bin/bash
-
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cd $SCRIPT_DIR
 MIRROR_SELECTED=~/.mirrors_selected.txt
 CURRENT_MIRROR=$(cat $MIRROR_SELECTED|head -n1)
 
@@ -27,7 +28,7 @@ for i in ${!APPS_ARRAY[@]}; do
 done
 
 # read user response and then process
-read -p "输入[0-${#APPS_ARRAY[@]}]:" choice
+read -p "输入[0-$(echo ${#APPS_ARRAY[@]}-1 |bc)]:" choice
 
 # OPTION 0: select a mirror
 if [[ $choice == "0" ]]; then 
